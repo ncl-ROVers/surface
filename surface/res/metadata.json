@@ -1,0 +1,8 @@
+{
+  "__title__": "surface",
+  "__version__": "0.0.0-alpha",
+  "__description__": "ROV surface control station",
+  "__lead__": "Kacper Florianski",
+  "__email__": "kacper.florianski@gmail.com",
+  "__url__": "https://github.com/ncl-ROVers/surface"
+}
