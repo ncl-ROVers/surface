@@ -1,0 +1,11 @@
+[FORMAT]
+max-line-length=120
+
+[MESSAGES CONTROL]
+disable = logging-fstring-interpolation, too-few-public-methods, too-many-instance-attributes
+
+[SIMILARITIES]
+min-similarity-lines=4
+ignore-comments=yes
+ignore-docstrings=yes
+ignore-imports=yes

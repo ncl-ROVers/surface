@@ -1,0 +1,3 @@
+[pydocstyle]
+add_ignore = D200, D105, D107
+add_select = D213, D214, D215, D404
