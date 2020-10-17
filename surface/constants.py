@@ -17,3 +17,7 @@ dotenv.load_dotenv(dotenv_path=os.path.join(RES_DIR, ".env"))
 # Declare redis settings - use .env file to override the defaults
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
+
+# Declare logging config - use .env file to override the defaults
+LOG_CONFIG_PATH = os.getenv("LOG_CONFIG_PATH", os.path.join(RES_DIR, "log-config.json"))
+LOGGER_NAME = os.getenv("LOGGER_NAME", "surface")
