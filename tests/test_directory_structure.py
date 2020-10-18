@@ -1,5 +1,5 @@
 """
-Testing module to verify file and directory correctness.
+Verify file and directory correctness.
 """
 
 
