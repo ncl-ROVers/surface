@@ -2,6 +2,8 @@
 Data manager module for dispatching information to different components of the vehicle.
 """
 from typing import Iterable
+import msgpack
+from msgpack import UnpackException, PackException
 from redis import Redis, RedisError
 from .utils import logger, classproperty
 from .constants import REDIS_HOST, REDIS_PORT
@@ -41,28 +43,29 @@ class _DataSegment:
         self._name = name
 
         try:
-            for key, value in data:
+            for key, value in data.items():
                 redis_key = self._build_redis_key(key)
                 if self._cache.exists(redis_key):
                     logger.warning(f"Key {key} already existed at the initialisation of data segment {self._name}, "
                                    f"and will get overridden")
-                self._cache.set(redis_key, bytes(value))
-        except RedisError as ex:
+                self._cache.set(redis_key, msgpack.packb(value))
+        except (RedisError, PackException) as ex:
             raise DataManagerException(f"Failed to initialise the data segment {self._name}") from ex
 
     def __getitem__(self, key):
         """
         Retrieve an item from the cache.
 
-        `DataManagerException` will be thrown if the key wasn't registered at `__init__`, or in case of Redis errors.
+        `DataManagerException` will be thrown if the key wasn't registered at `__init__`, or in case of Redis and bytes
+        conversion errors.
         """
         if key not in self._keys:
             raise DataManagerException(f"Failed to retrieve value using key {key} - key not registered")
 
         redis_key = self._build_redis_key(key)
         try:
-            return self._cache.get(redis_key)
-        except RedisError as ex:
+            return msgpack.unpackb(self._cache.get(redis_key))
+        except (RedisError, UnpackException) as ex:
             raise DataManagerException(f"Failed to retrieve value using key {key}") from ex
 
     def __setitem__(self, key, value):
@@ -77,8 +80,8 @@ class _DataSegment:
 
         redis_key = self._build_redis_key(key)
         try:
-            self._cache.set(redis_key, bytes(value))
-        except (RedisError, TypeError) as ex:
+            self._cache.set(redis_key, msgpack.packb(value))
+        except (RedisError, PackException) as ex:
             raise DataManagerException(f"Failed to save value {value} using key {key}") from ex
 
     @property
@@ -86,36 +89,24 @@ class _DataSegment:
         """
         Retrieve all stored (key, value) pairs.
 
-        `DataManagerException` will be thrown in case of Redis errors.
+        `DataManagerException` will be thrown in case of `__getitem__` errors.
         """
-        data = dict()
-
-        for key in self._keys:
-            try:
-                redis_key = self._build_redis_key(key)
-                data[key] = self._cache.get(redis_key)
-            except RedisError as ex:
-                raise DataManagerException(f"Failed to retrieve value using key {key}") from ex
-
-        return data
+        return {key: self.__getitem__(key) for key in self._keys}
 
     def fetch(self, keys: Iterable):
         """
         Retrieve a subset of all stored (key, value) pairs.
 
-        `DataManagerException` will be thrown in case of Redis errors. Non-registered keys will be ignored.
+        `DataManagerException` will be thrown in case of `__getitem__` errors. Non-registered keys will be ignored.
         """
         data = dict()
 
-        try:
-            for key in keys:
-                redis_key = self._build_redis_key(key)
-                if not self._cache.exists(redis_key):
-                    logger.warning(f"Skipping fetching key {key} for data segment {self._name} - key not registered")
-                    continue
-                data[key] = self._cache.get(redis_key)
-        except RedisError as ex:
-            raise DataManagerException(f"Failed to fetch the data segment {self._name} using keys {keys}") from ex
+        for key in keys:
+            redis_key = self._build_redis_key(key)
+            if not self._cache.exists(redis_key):
+                logger.warning(f"Skipping fetching key {key} for data segment {self._name} - key not registered")
+                continue
+            data[key] = self.__getitem__(key)
 
         return data
 
@@ -123,18 +114,14 @@ class _DataSegment:
         """
         Retrieve a subset of all stored (key, value) pairs.
 
-        `DataManagerException` will be thrown in case of Redis or bytes conversion errors. Non-registered keys will
-        be ignored.
+        `DataManagerException` will be thrown in case of `__setitem__` errors. Non-registered keys will be ignored.
         """
-        try:
-            for key, value in data:
-                redis_key = self._build_redis_key(key)
-                if not self._cache.exists(redis_key):
-                    logger.warning(f"Skipping updating key {key} for data segment {self._name} - key not registered")
-                    continue
-                self._cache.set(redis_key, bytes(value))
-        except (RedisError, TypeError) as ex:
-            raise DataManagerException(f"Failed to update the data segment {self._name} using data {data}") from ex
+        for key, value in data.items():
+            redis_key = self._build_redis_key(key)
+            if not self._cache.exists(redis_key):
+                logger.warning(f"Skipping updating key {key} for data segment {self._name} - key not registered")
+                continue
+            self.__setitem__(key, value)
 
     def _build_redis_key(self, key: str) -> str:
         """
