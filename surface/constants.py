@@ -21,3 +21,25 @@ REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 # Declare logging config - use .env file to override the defaults
 LOG_CONFIG_PATH = os.getenv("LOG_CONFIG_PATH", os.path.join(RES_DIR, "log-config.json"))
 LOGGER_NAME = os.getenv("LOGGER_NAME", "surface")
+
+# Declare data dictionaries (that will be stored in cache) with their defaults
+# Connection statuses between various components of the vehicle
+DATA_CONNECTIONS = {
+
+}
+# Data received from Raspberry Pi
+DATA_RECEIVED = {
+
+}
+# Data that will be sent to Raspberry Pi
+DATA_TRANSMISSION = {
+
+}
+# Autonomous, manual, and assisted control system data
+DATA_CONTROL = {
+
+}
+# Other, un-classified data
+DATA_MISCELLANEOUS = {
+
+}

@@ -7,6 +7,7 @@ from msgpack import UnpackException, PackException
 from redis import Redis, RedisError
 from .utils import logger, classproperty
 from .constants import REDIS_HOST, REDIS_PORT
+from .constants import DATA_CONNECTIONS, DATA_CONTROL, DATA_MISCELLANEOUS, DATA_RECEIVED, DATA_TRANSMISSION
 from .exceptions import DataManagerException
 
 
@@ -137,20 +138,80 @@ class DataManager:
 
     Currently the segments are as follows:
 
-        - TODO
-        - TODO
-        - TODO
+        - connections - for monitoring network connection to each component
+        - received - for data received from the ROV
+        - transmission - for data that will be sent to the ROV
+        - control - for all control system information
+        - miscellaneous - for other, un-classified data
+
+    You can retrieve each segment by using the associated descriptor, e.g.:
+
+        print(DataManager.transmission.all)
 
     Keep in mind that each segment MUST have a unique name to avoid key collisions in cache.
     """
 
     # pylint: disable=no-method-argument
     _cache = Redis(host=REDIS_HOST, port=REDIS_PORT)
-    # TODO: Create all data segments and getters to them using classproperty
-    # _segments = [
-    #     _DataSegment(
-    #         name="",
-    #         cache=_cache,
-    #         data=dict()
-    #     )
-    # ]
+    _segments = [
+        _DataSegment(
+            name="connections",
+            cache=_cache,
+            data=DATA_CONNECTIONS
+        ),
+        _DataSegment(
+            name="received",
+            cache=_cache,
+            data=DATA_RECEIVED
+        ),
+        _DataSegment(
+            name="transmission",
+            cache=_cache,
+            data=DATA_TRANSMISSION
+        ),
+        _DataSegment(
+            name="control",
+            cache=_cache,
+            data=DATA_CONTROL
+        ),
+        _DataSegment(
+            name="miscellaneous",
+            cache=_cache,
+            data=DATA_MISCELLANEOUS
+        )
+    ]
+
+    @classproperty
+    def connections() -> _DataSegment:
+        """
+        Fetch `connections` data.
+        """
+        return DataManager._segments[0]
+
+    @classproperty
+    def received() -> _DataSegment:
+        """
+        Fetch `received` data.
+        """
+        return DataManager._segments[1]
+
+    @classproperty
+    def transmission() -> _DataSegment:
+        """
+        Fetch `transmission` data.
+        """
+        return DataManager._segments[2]
+
+    @classproperty
+    def control() -> _DataSegment:
+        """
+        Fetch `control` data.
+        """
+        return DataManager._segments[3]
+
+    @classproperty
+    def miscellaneous() -> _DataSegment:
+        """
+        Fetch `miscellaneous` data.
+        """
+        return DataManager._segments[4]
