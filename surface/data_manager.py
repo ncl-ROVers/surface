@@ -5,7 +5,7 @@ from typing import Iterable
 import msgpack
 from msgpack import UnpackException, PackException
 from redis import Redis, RedisError
-from .utils import logger, classproperty
+from .utils import logger, classgetter
 from .constants import REDIS_HOST, REDIS_PORT
 from .constants import DATA_CONNECTIONS, DATA_CONTROL, DATA_MISCELLANEOUS, DATA_RECEIVED, DATA_TRANSMISSION
 from .exceptions import DataManagerException
@@ -181,35 +181,35 @@ class DataManager:
         )
     ]
 
-    @classproperty
+    @classgetter
     def connections() -> _DataSegment:
         """
         Fetch `connections` data.
         """
         return DataManager._segments[0]
 
-    @classproperty
+    @classgetter
     def received() -> _DataSegment:
         """
         Fetch `received` data.
         """
         return DataManager._segments[1]
 
-    @classproperty
+    @classgetter
     def transmission() -> _DataSegment:
         """
         Fetch `transmission` data.
         """
         return DataManager._segments[2]
 
-    @classproperty
+    @classgetter
     def control() -> _DataSegment:
         """
         Fetch `control` data.
         """
         return DataManager._segments[3]
 
-    @classproperty
+    @classgetter
     def miscellaneous() -> _DataSegment:
         """
         Fetch `miscellaneous` data.

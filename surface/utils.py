@@ -8,15 +8,15 @@ from .constants import LOG_CONFIG_PATH, LOG_DIR, LOGGER_NAME
 
 
 # noinspection PyPep8Naming
-class classproperty:
+class classgetter:
     """
-    Descriptor allowing declaring class-bound properties.
+    Descriptor allowing declaring class-bound getters.
 
-    Once used, you can declare a class property as follows:
+    Once used, you can declare a class getter as follows:
 
         class SomeClass:
 
-            @classproperty
+            @classgetter
             def value():
                 return 10
 
