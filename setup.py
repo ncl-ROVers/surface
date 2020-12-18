@@ -35,7 +35,9 @@ setuptools.setup(
         "Programming Language :: Python :: 3.6",
     ],
     install_requires=[
-
+        "redis",
+        "python-dotenv",
+        "msgpack"
     ],
     python_requires=">=3.6",
 )

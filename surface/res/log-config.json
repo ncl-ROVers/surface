@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "formatters": {
+    "console": {
+      "format": "{message}",
+      "style": "{"
+    },
+    "basic": {
+      "format": "{name:<24} | {asctime} {levelname:<8}\t| {message}",
+      "datefmt": "%y-%m-%d %H:%M:%S",
+      "style": "{"
+    },
+    "verbose": {
+      "format": "{name:<24} | {asctime} {levelname:<8}\t| {processName:<16} {process}\t| {message}",
+      "datefmt": "%y-%m-%d %H:%M:%S",
+      "style": "{"
+    }
+  },
+  "handlers": {
+    "console": {
+      "level": "INFO",
+      "class": "logging.StreamHandler",
+      "formatter": "console",
+      "stream": "ext://sys.stdout"
+    },
+    "verbose": {
+      "level": "DEBUG",
+      "class": "logging.FileHandler",
+      "filename": "verbose.log",
+      "formatter": "verbose",
+      "encoding": "utf-8"
+    },
+    "info": {
+      "level": "INFO",
+      "class": "logging.FileHandler",
+      "filename": "info.log",
+      "formatter": "basic",
+      "encoding": "utf-8"
+    },
+    "warning": {
+      "level": "WARNING",
+      "class": "logging.FileHandler",
+      "filename": "warning.log",
+      "formatter": "basic",
+      "encoding": "utf-8"
+    }
+  },
+  "loggers": {
+    "surface": {
+      "level": "DEBUG",
+      "handlers": ["console", "verbose", "info", "warning"],
+      "propagate": false
+    }
+  }
+}
