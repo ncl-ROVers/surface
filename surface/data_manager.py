@@ -53,9 +53,11 @@ class _DataSegment:
         except (RedisError, PackException) as ex:
             raise DataManagerException(f"Failed to initialise the data segment {self._name}") from ex
 
-    def __getitem__(self, key):
+    def __getitem__(self, key, unpack: bool = True):
         """
         Retrieve an item from the cache.
+
+        Optionally (and by default) convert the item from bytes to the relevant Python object.
 
         `DataManagerException` will be thrown if the key wasn't registered at `__init__`, or in case of Redis and bytes
         conversion errors.
@@ -65,7 +67,8 @@ class _DataSegment:
 
         redis_key = self._build_redis_key(key)
         try:
-            return msgpack.unpackb(self._cache.get(redis_key))
+            value = self._cache.get(redis_key)
+            return msgpack.unpackb(value) if unpack else value
         except (RedisError, UnpackException) as ex:
             raise DataManagerException(f"Failed to retrieve value using key {key}") from ex
 
@@ -81,22 +84,27 @@ class _DataSegment:
 
         redis_key = self._build_redis_key(key)
         try:
-            self._cache.set(redis_key, msgpack.packb(value))
+            redis_value = value if isinstance(value, bytes) else msgpack.packb(value)
+            self._cache.set(redis_key, redis_value)
         except (RedisError, PackException) as ex:
             raise DataManagerException(f"Failed to save value {value} using key {key}") from ex
 
     @property
-    def all(self) -> dict:
+    def all(self, unpack: bool = True) -> dict:
         """
         Retrieve all stored (key, value) pairs.
 
+        Optionally (and by default) convert all items from bytes to the relevant Python object.
+
         `DataManagerException` will be thrown in case of `__getitem__` errors.
         """
-        return {key: self.__getitem__(key) for key in self._keys}
+        return {key: self.__getitem__(key, unpack) for key in self._keys}
 
-    def fetch(self, keys: Iterable):
+    def fetch(self, keys: Iterable, unpack: bool = True):
         """
         Retrieve a subset of all stored (key, value) pairs.
+
+        Optionally (and by default) convert all items from bytes to the relevant Python object.
 
         `DataManagerException` will be thrown in case of `__getitem__` errors. Non-registered keys will be ignored.
         """
@@ -107,7 +115,7 @@ class _DataSegment:
             if not self._cache.exists(redis_key):
                 logger.warning(f"Skipping fetching key {key} for data segment {self._name} - key not registered")
                 continue
-            data[key] = self.__getitem__(key)
+            data[key] = self.__getitem__(key, unpack)
 
         return data
 
