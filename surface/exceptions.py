@@ -13,3 +13,9 @@ class DataManagerException(SurfaceException):
     """
     DataManager and DataSegment errors.
     """
+
+
+class NetworkingException(SurfaceException):
+    """
+    Connection and video streaming errors.
+    """

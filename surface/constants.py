@@ -23,9 +23,10 @@ REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 LOG_CONFIG_PATH = os.getenv("LOG_CONFIG_PATH", os.path.join(RES_DIR, "log-config.json"))
 LOGGER_NAME = os.getenv("LOGGER_NAME", "surface")
 
-# Declare connection address - use .env file to override the defaults
+# Declare connection information - use .env file to override the defaults
 CONNECTION_IP = os.getenv("CONNECTION_IP", "localhost")
 CONNECTION_PORT = int(os.getenv("CONNECTION_PORT", "50000"))
+CONNECTION_DATA_SIZE = int(os.getenv("CONNECTION_DATA_SIZE", "4096"))
 
 # Declare connection keys
 RK_CONNECTION_SURFACE_PI = "surface-pi"
