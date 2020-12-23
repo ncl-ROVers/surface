@@ -18,6 +18,7 @@ class ConnectionStatus(Enum):
 
     The connection statuses will represent connections between all networking elements of the ROV.
     """
+
     CONNECTED = 0
     DISCONNECTED = 1
     CONNECTING = 2

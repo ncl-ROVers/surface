@@ -29,7 +29,7 @@ jobs:
         run: |
           python -m pip install pylint pydocstyle
           pylint --rcfile .pylintrc surface tests setup.py
-          pydocstyle --config .pydocstylerc
+          pydocstyle --config .pydocstylerc surface tests setup.py
 
       - name: Tests (pytest)
         run: |

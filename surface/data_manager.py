@@ -47,8 +47,8 @@ class _DataSegment:
             for key, value in data.items():
                 redis_key = self._build_redis_key(key)
                 if self._cache.exists(redis_key):
-                    logger.warning(f"Key {key} already existed at the initialisation of data segment {self._name}, "
-                                   f"and will get overridden")
+                    logger.debug(f"Key {key} already existed at the initialisation of data segment {self._name}, "
+                                 f"and will get overridden")
                 self._cache.set(redis_key, msgpack.packb(value))
         except (RedisError, PackException) as ex:
             raise DataManagerException(f"Failed to initialise the data segment {self._name}") from ex
@@ -89,7 +89,6 @@ class _DataSegment:
         except (RedisError, PackException) as ex:
             raise DataManagerException(f"Failed to save value {value} using key {key}") from ex
 
-    @property
     def all(self, unpack: bool = True) -> dict:
         """
         Retrieve all stored (key, value) pairs.
@@ -136,7 +135,7 @@ class _DataSegment:
         """
         Build a redis key string that guarantees uniqueness with respect to this data segment.
         """
-        return self._name + "-" + key
+        return self._name + ":" + key
 
 
 # noinspection PyMethodParameters
@@ -188,6 +187,14 @@ class DataManager:
             data=DATA_MISCELLANEOUS
         )
     ]
+
+    # Type hint return types of the segments to trick pylint, as it doesn't understand how descriptors work
+    # pylint: disable = function-redefined
+    connections: _DataSegment
+    received: _DataSegment
+    transmission: _DataSegment
+    control: _DataSegment
+    miscellaneous: _DataSegment
 
     @classgetter
     def connections() -> _DataSegment:

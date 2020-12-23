@@ -34,15 +34,31 @@ RK_CONNECTION_SURFACE_PI = "surface-pi"
 # Declare data dictionaries (that will be stored in cache) with their defaults (RK stands for Redis Key)
 # Connection statuses between various components of the vehicle
 DATA_CONNECTIONS = {
-    RK_CONNECTION_SURFACE_PI: ConnectionStatus.DISCONNECTED
+    RK_CONNECTION_SURFACE_PI: ConnectionStatus.DISCONNECTED.value
 }
 # Data received from Raspberry Pi
 DATA_RECEIVED = {
-
+    "A_O": False,
+    "A_I": False,
+    "S_O": 0,
+    "S_I": 0
 }
 # Data that will be sent to Raspberry Pi
+THRUSTER_IDLE = 1500
+GRIPPER_IDLE = 1500
+CORD_IDLE = 1500
 DATA_TRANSMISSION = {
-
+    "T_HFP": THRUSTER_IDLE,
+    "T_HFS": THRUSTER_IDLE,
+    "T_HAP": THRUSTER_IDLE,
+    "T_HAS": THRUSTER_IDLE,
+    "T_VFP": THRUSTER_IDLE,
+    "T_VFS": THRUSTER_IDLE,
+    "T_VAP": THRUSTER_IDLE,
+    "T_VAS": THRUSTER_IDLE,
+    "T_M": THRUSTER_IDLE,
+    "M_G": GRIPPER_IDLE,
+    "M_C": CORD_IDLE
 }
 # Autonomous, manual, and assisted control system data
 DATA_CONTROL = {
