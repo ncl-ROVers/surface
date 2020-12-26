@@ -37,7 +37,11 @@ setuptools.setup(
     install_requires=[
         "redis",
         "python-dotenv",
-        "msgpack"
+        "msgpack",
+        "numpy",
+        "sklearn",
+        "pandas",
+        "opencv-python"
     ],
     python_requires=">=3.6",
 )
