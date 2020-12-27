@@ -24,3 +24,13 @@ class ConnectionStatus(Enum):
     CONNECTING = 2
     DISCONNECTING = 3
     IDLE = 4
+
+
+class DrivingMode(Enum):
+    """
+    todo
+    """
+
+    MANUAL = 0,
+    AUTONOMOUS = 1,
+    ASSISTED = 2
