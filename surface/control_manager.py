@@ -6,7 +6,7 @@ from .enums import DrivingMode
 from .model import ControlModel
 from .converter import Converter
 from .constants import DATA_CONTROL, CONTROL_MANAGER_NAME, CONTROL_MANUAL_NAME, CONTROL_AUTONOMOUS_NAME
-from .constants import RK_CONTROL_DRIVING_MODE, CONTROL_NORM_IDLE
+from .converter import CONTROL_NORM_IDLE
 
 
 class ControlManager(ControlModel):
@@ -19,21 +19,6 @@ class ControlManager(ControlModel):
         self._manual = {key: value for key, value in control_data_items if key.startswith(CONTROL_MANUAL_NAME)}
         self._autonomous = {key: value for key, value in control_data_items if key.startswith(CONTROL_AUTONOMOUS_NAME)}
         self._converted = dict()
-
-    @property
-    def mode(self) -> DrivingMode:
-        """
-        todo
-        """
-        return DrivingMode(DataManager.control[RK_CONTROL_DRIVING_MODE])
-
-    @mode.setter
-    def mode(self, value: DrivingMode):
-        """
-        todo
-        """
-        # pylint: disable = no-self-use
-        DataManager.control[RK_CONTROL_DRIVING_MODE] = value.value
 
     def update(self, *args, **kwargs):
         """

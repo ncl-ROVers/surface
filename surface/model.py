@@ -6,6 +6,8 @@ from abc import ABC
 from typing import Dict, Set
 from .data_manager import DataManager
 from .motion import Motion
+from .constants import RK_CONTROL_DRIVING_MODE
+from .enums import DrivingMode
 
 
 class ControlModel(ABC):
@@ -24,6 +26,21 @@ class ControlModel(ABC):
         self._sway = Motion("sway")
         self._surge = Motion("surge")
         self._heave = Motion("heave")
+
+    @property
+    def mode(self) -> DrivingMode:
+        """
+        todo
+        """
+        return DrivingMode(DataManager.control[RK_CONTROL_DRIVING_MODE])
+
+    @mode.setter
+    def mode(self, value: DrivingMode):
+        """
+        todo
+        """
+        # pylint: disable = no-self-use
+        DataManager.control[RK_CONTROL_DRIVING_MODE] = value.value
 
     @property
     def motions(self) -> Dict[str, Motion]:
