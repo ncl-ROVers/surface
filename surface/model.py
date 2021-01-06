@@ -3,7 +3,7 @@ todo
 """
 import abc
 from abc import ABC
-from typing import Dict
+from typing import Dict, Set
 from .data_manager import DataManager
 from .motion import Motion
 
@@ -39,15 +39,40 @@ class ControlModel(ABC):
             "heave": self._heave
         }
 
+    @motions.setter
+    def motions(self, values: dict):
+        """
+        todo - mention explicit update instead of setattrr to get meaningful errors
+        """
+        self._yaw = values["yaw"]
+        self._pitch = values["pitch"]
+        self._roll = values["roll"]
+        self._sway = values["sway"]
+        self._surge = values["surge"]
+        self._heave = values["heave"]
+
+    @property
+    def keys(self) -> Set[str]:
+        """
+        todo get manager keys
+        """
+        return {self._build_key(key) for key in self.motions.keys()}
+
     @abc.abstractmethod
     def update(self, *args, **kwargs):
         """
-        todo
+        todo - abstrac method, update self.motions here, and self.push at the end
         """
 
     def push(self):
         """
         todo
         """
-        data = {"-".join((self._name, key)): value.value for key, value in self.motions.items()}
+        data = {self._build_key(key): value.value for key, value in self.motions.items()}
         DataManager.control.update(data)
+
+    def _build_key(self, key: str) -> str:
+        """
+        todo
+        """
+        return "-".join((self._name, key))
