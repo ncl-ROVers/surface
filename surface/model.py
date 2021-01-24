@@ -28,6 +28,54 @@ class ControlModel(ABC):
         self._heave = Motion("heave")
 
     @property
+    def yaw(self) -> float:
+        return self._yaw.value
+
+    @yaw.setter
+    def yaw(self, value: float):
+        self._yaw.value = value
+
+    @property
+    def pitch(self) -> float:
+        return self._pitch.value
+
+    @pitch.setter
+    def pitch(self, value: float):
+        self._pitch.value = value
+
+    @property
+    def roll(self) -> float:
+        return self._roll.value
+
+    @roll.setter
+    def roll(self, value: float):
+        self._roll.value = value
+
+    @property
+    def sway(self) -> float:
+        return self._sway.value
+
+    @sway.setter
+    def sway(self, value: float):
+        self._sway.value = value
+
+    @property
+    def surge(self) -> float:
+        return self._surge.value
+
+    @surge.setter
+    def surge(self, value: float):
+        self._surge.value = value
+
+    @property
+    def heave(self) -> float:
+        return self._heave.value
+
+    @heave.setter
+    def heave(self, value: float):
+        self._heave.value = value
+
+    @property
     def mode(self) -> DrivingMode:
         """
         todo
@@ -43,17 +91,17 @@ class ControlModel(ABC):
         DataManager.control[RK_CONTROL_DRIVING_MODE] = value.value
 
     @property
-    def motions(self) -> Dict[str, Motion]:
+    def motions(self) -> Dict[str, float]:
         """
         todo
         """
         return {
-            "yaw": self._yaw,
-            "pitch": self._pitch,
-            "roll": self._roll,
-            "sway": self._sway,
-            "surge": self._surge,
-            "heave": self._heave
+            "yaw": self.yaw,
+            "pitch": self.pitch,
+            "roll": self.roll,
+            "sway": self.sway,
+            "surge": self.surge,
+            "heave": self.heave
         }
 
     @motions.setter
@@ -61,12 +109,12 @@ class ControlModel(ABC):
         """
         todo - mention explicit update instead of setattrr to get meaningful errors
         """
-        self._yaw = values["yaw"]
-        self._pitch = values["pitch"]
-        self._roll = values["roll"]
-        self._sway = values["sway"]
-        self._surge = values["surge"]
-        self._heave = values["heave"]
+        self.yaw = values["yaw"]
+        self.pitch = values["pitch"]
+        self.roll = values["roll"]
+        self.sway = values["sway"]
+        self.surge = values["surge"]
+        self.heave = values["heave"]
 
     @property
     def keys(self) -> Set[str]:
@@ -85,7 +133,7 @@ class ControlModel(ABC):
         """
         todo
         """
-        data = {self._build_key(key): value.value for key, value in self.motions.items()}
+        data = {self._build_key(key): value for key, value in self.motions.items()}
         DataManager.control.update(data)
 
     def _build_key(self, key: str) -> str:
