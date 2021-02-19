@@ -16,7 +16,7 @@ def normalise(value: float, current_min: float, current_max: float, intended_min
     """
     if current_min == current_max or intended_min == intended_max:
         raise ValueError("Minimum and maximum (both current and intended) must not be equal")
-    elif not (current_max >= value >= current_min):
+    if not current_max >= value >= current_min:
         raise ValueError(f"Value {value} is not be between {current_min} and {current_max}")
 
     return round(intended_min + (value - current_min) * (intended_max - intended_min) / (current_max - current_min),

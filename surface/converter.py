@@ -1,8 +1,7 @@
 """
-todo
+Utility module allowing conversion of normalised motion values to hardware-specific ranges.
 """
 from typing import Dict
-from .motion import Motion
 from .constants import CONTROL_NORM_IDLE, CONTROL_NORM_MAX, CONTROL_NORM_MIN
 from .constants import THRUSTER_MAX, THRUSTER_MIN
 from .utils import normalise
@@ -10,13 +9,13 @@ from .utils import normalise
 
 class Converter:
     """
-    todo
+    Static class acting as a namespace provider for converting the data.
     """
 
     @staticmethod
-    def convert(motions: Dict[str, Motion]) -> Dict[str, int]:
+    def convert(motions: Dict[str, float]) -> Dict[str, int]:
         """
-        todo
+        Create the control data dictionary, built using the motions.
         """
         return {
             "T_HFP": Converter._thruster_hfp(motions),
@@ -30,11 +29,11 @@ class Converter:
         }
 
     @staticmethod
-    def _thruster_hfp(motions: Dict[str, Motion]) -> int:
+    def _thruster_hfp(motions: Dict[str, float]) -> int:
         """
         Hierarchical control for horizontal fore port thruster.
         """
-        surge, yaw, sway = motions["surge"].value, motions["yaw"].value, motions["sway"].value
+        surge, yaw, sway = motions["surge"], motions["yaw"], motions["sway"]
 
         if surge and yaw:
 
@@ -59,11 +58,11 @@ class Converter:
         return Converter._to_thruster_value(value)
 
     @staticmethod
-    def _thruster_hfs(motions: Dict[str, Motion]) -> int:
+    def _thruster_hfs(motions: Dict[str, float]) -> int:
         """
         Hierarchical control for horizontal fore starboard thruster.
         """
-        surge, yaw, sway = motions["surge"].value, motions["yaw"].value, motions["sway"].value
+        surge, yaw, sway = motions["surge"], motions["yaw"], motions["sway"]
 
         if surge and yaw:
 
@@ -88,11 +87,11 @@ class Converter:
         return Converter._to_thruster_value(value)
 
     @staticmethod
-    def _thruster_hap(motions: Dict[str, Motion]) -> int:
+    def _thruster_hap(motions: Dict[str, float]) -> int:
         """
         Hierarchical control for horizontal aft port thruster.
         """
-        surge, yaw, sway = motions["surge"].value, motions["yaw"].value, motions["sway"].value
+        surge, yaw, sway = motions["surge"], motions["yaw"], motions["sway"]
 
         if surge and yaw:
 
@@ -117,11 +116,11 @@ class Converter:
         return Converter._to_thruster_value(value)
 
     @staticmethod
-    def _thruster_has(motions: Dict[str, Motion]) -> int:
+    def _thruster_has(motions: Dict[str, float]) -> int:
         """
         Hierarchical control for vertical aft starboard thruster.
         """
-        surge, yaw, sway = motions["surge"].value, motions["yaw"].value, motions["sway"].value
+        surge, yaw, sway = motions["surge"], motions["yaw"], motions["sway"]
 
         if surge and yaw:
 
@@ -146,11 +145,11 @@ class Converter:
         return Converter._to_thruster_value(value)
 
     @staticmethod
-    def _thruster_vfp(motions: Dict[str, Motion]) -> int:
+    def _thruster_vfp(motions: Dict[str, float]) -> int:
         """
         Hierarchical control for vertical fore port thruster.
         """
-        heave, pitch, roll = motions["heave"].value, motions["pitch"].value, motions["roll"].value
+        heave, pitch, roll = motions["heave"], motions["pitch"], motions["roll"]
 
         if heave:
             value = heave
@@ -167,11 +166,11 @@ class Converter:
         return Converter._to_thruster_value(value)
 
     @staticmethod
-    def _thruster_vfs(motions: Dict[str, Motion]) -> int:
+    def _thruster_vfs(motions: Dict[str, float]) -> int:
         """
         Hierarchical control for vertical fore starboard thruster.
         """
-        heave, pitch, roll = motions["heave"].value, motions["pitch"].value, motions["roll"].value
+        heave, pitch, roll = motions["heave"], motions["pitch"], motions["roll"]
 
         if heave:
             value = heave
@@ -188,11 +187,11 @@ class Converter:
         return Converter._to_thruster_value(value)
 
     @staticmethod
-    def _thruster_vap(motions: Dict[str, Motion]) -> int:
+    def _thruster_vap(motions: Dict[str, float]) -> int:
         """
         Hierarchical control for vertical aft port thruster.
         """
-        heave, pitch, roll = motions["heave"].value, motions["pitch"].value, motions["roll"].value
+        heave, pitch, roll = motions["heave"], motions["pitch"], motions["roll"]
 
         if heave:
             value = heave
@@ -209,11 +208,11 @@ class Converter:
         return Converter._to_thruster_value(value)
 
     @staticmethod
-    def _thruster_vas(motions: Dict[str, Motion]) -> int:
+    def _thruster_vas(motions: Dict[str, float]) -> int:
         """
         Hierarchical control for vertical aft starboard thruster.
         """
-        heave, pitch, roll = motions["heave"].value, motions["pitch"].value, motions["roll"].value
+        heave, pitch, roll = motions["heave"], motions["pitch"], motions["roll"]
 
         if heave:
             value = heave
