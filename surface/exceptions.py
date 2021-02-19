@@ -19,3 +19,15 @@ class NetworkingException(SurfaceException):
     """
     Connection and video streaming errors.
     """
+
+
+class ComputerVisionException(SurfaceException):
+    """
+    Computer vision algorithms' errors.
+    """
+
+
+class ControlSystemException(SurfaceException):
+    """
+    Control model's errors and related.
+    """

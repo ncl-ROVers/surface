@@ -24,3 +24,20 @@ class ConnectionStatus(Enum):
     CONNECTING = 2
     DISCONNECTING = 3
     IDLE = 4
+
+
+class DrivingMode(Enum):
+    """
+    Control mode of the ROV.
+
+    Each mode corresponds to the following behaviour:
+
+        - Manual for game pad controlling
+        - Autonomous for running fully autonomous control algorithms
+        - Assisted for easier, manual control of the vehicle
+
+    """
+
+    MANUAL = 0
+    AUTONOMOUS = 1
+    ASSISTED = 2
