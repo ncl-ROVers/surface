@@ -2,16 +2,15 @@
 Manual driving control model.
 """
 from multiprocessing import Process
-import inputs
 from inputs import InputEvent
-from .utils import logger
 from .model import ControlModel
-from .constants import DEAD_ZONE, CONTROL_NORM_IDLE, CONTROL_NORM_MIN, CONTROL_NORM_MAX
-from .constants import HARDWARE_AXIS_MAX, HARDWARE_AXIS_MIN, HARDWARE_TRIGGER_MAX, HARDWARE_TRIGGER_MIN
-from .constants import INTENDED_AXIS_MAX, INTENDED_AXIS_MIN, INTENDED_TRIGGER_MAX, INTENDED_TRIGGER_MIN
-from .utils import normalise
-from .enums import DrivingMode
-from .exceptions import ControlSystemException
+from .common import normalise
+from ..constants.control import GAME_PAD, DEAD_ZONE, CONTROL_NORM_IDLE, CONTROL_NORM_MIN, CONTROL_NORM_MAX
+from ..constants.control import HARDWARE_AXIS_MAX, HARDWARE_AXIS_MIN, HARDWARE_TRIGGER_MAX, HARDWARE_TRIGGER_MIN
+from ..constants.control import INTENDED_AXIS_MAX, INTENDED_AXIS_MIN, INTENDED_TRIGGER_MAX, INTENDED_TRIGGER_MIN
+from ..enums import DrivingMode
+from ..utils import logger
+from ..exceptions import ControlSystemException
 
 # Create the hardware to class value dispatcher
 DISPATCH_MAP = {
@@ -34,9 +33,6 @@ DISPATCH_MAP = {
     "BTN_START": "button_select",
     "BTN_SELECT": "button_start"
 }
-
-# Controller must be defined outside of the class to allow seamless multiprocessing (otherwise serialisation fails)
-CONTROLLER = inputs.devices.gamepads[0] if inputs.devices.gamepads else None
 
 
 def _normalise_axis(value: int) -> float:
@@ -67,7 +63,7 @@ class ManualController(ControlModel):
     def __init__(self):
         super().__init__("manual")
 
-        if not CONTROLLER:
+        if not GAME_PAD:
             logger.error("Failed to detect the game controller")
             return
 
@@ -450,7 +446,7 @@ class ManualController(ControlModel):
         Target for the process spawning (wrapper method).
         """
         while True:
-            self._dispatch_event(CONTROLLER.read()[0])
+            self._dispatch_event(GAME_PAD.read()[0])
 
     def start(self) -> int:
         """
@@ -458,7 +454,7 @@ class ManualController(ControlModel):
 
         PID is returned to properly cleanup the processes in the main execution loop.
         """
-        if not CONTROLLER:
+        if not GAME_PAD:
             raise ControlSystemException("Can't start the control system loop")
 
         self._process.start()

@@ -8,7 +8,7 @@ from pandas import DataFrame
 import numpy as np
 from numpy import ndarray
 from sklearn.cluster import KMeans
-from .utils import logger
+from ..utils import logger
 
 
 def _remove_circles(mask: ndarray) -> ndarray:

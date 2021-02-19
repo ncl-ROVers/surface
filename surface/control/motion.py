@@ -1,8 +1,8 @@
 """
 Wrapper class around the normalised motion values.
 """
-from .exceptions import ControlSystemException
-from .constants import CONTROL_NORM_MAX, CONTROL_NORM_MIN, CONTROL_NORM_IDLE
+from ..constants.control import CONTROL_NORM_MAX, CONTROL_NORM_MIN, CONTROL_NORM_IDLE
+from ..exceptions import ControlSystemException
 
 
 class Motion:

@@ -2,13 +2,13 @@
 "Joint" control model capable of merging data from several driving modes.
 """
 from multiprocessing import Process
-from .data_manager import DataManager
-from .enums import DrivingMode
 from .model import ControlModel
 from .converter import Converter
-from .constants import DATA_CONTROL, CONTROL_MANAGER_NAME, CONTROL_MANUAL_NAME, CONTROL_AUTONOMOUS_NAME
-from .converter import CONTROL_NORM_IDLE
-from .utils import logger
+from ..enums import DrivingMode
+from ..constants.control import CONTROL_MANAGER_NAME, CONTROL_MANUAL_NAME, CONTROL_AUTONOMOUS_NAME, CONTROL_NORM_IDLE
+from ..constants.mastermind import DATA_CONTROL
+from ..mastermind import DataManager
+from ..utils import logger
 
 
 class ControlManager(ControlModel):
