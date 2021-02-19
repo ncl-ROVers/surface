@@ -1,12 +1,14 @@
 """
 "Joint" control model capable of merging data from several driving modes.
 """
+from multiprocessing import Process
 from .data_manager import DataManager
 from .enums import DrivingMode
 from .model import ControlModel
 from .converter import Converter
 from .constants import DATA_CONTROL, CONTROL_MANAGER_NAME, CONTROL_MANUAL_NAME, CONTROL_AUTONOMOUS_NAME
 from .converter import CONTROL_NORM_IDLE
+from .utils import logger
 
 
 class ControlManager(ControlModel):
@@ -37,6 +39,8 @@ class ControlManager(ControlModel):
         self._manual = {key: value for key, value in control_data_items if key.startswith(CONTROL_MANUAL_NAME)}
         self._autonomous = {key: value for key, value in control_data_items if key.startswith(CONTROL_AUTONOMOUS_NAME)}
         self._converted = dict()
+
+        self._process = Process(target=self._run, name="Control Manager")
 
     def update(self, *args, **kwargs):
         """
@@ -76,9 +80,26 @@ class ControlManager(ControlModel):
         """
         self._converted = Converter.convert(self.motions)
 
+    def _run(self):
+        """
+        Target for the process spawning (wrapper method).
+        """
+        while True:
+            self.update()
+
     def push(self):
         """
         Update relevant DataManager data - for control and for transmission.
         """
         super().push()
         DataManager.transmission.update(self._converted)
+
+    def start(self) -> int:
+        """
+        Start the merging process in a separate process.
+
+        PID is returned to properly cleanup the processes in the main execution loop.
+        """
+        self._process.start()
+        logger.info(f"Control manager process started, pid {self._process.pid}")
+        return self._process.pid

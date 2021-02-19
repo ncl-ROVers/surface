@@ -90,7 +90,7 @@ class ManualController(ControlModel):
         self._button_select = False
         self._button_start = False
 
-        self._process = Process(target=self._read, name="Controller")
+        self._process = Process(target=self._run, name="Manual Controller")
 
     @property
     def left_axis_x(self) -> float:
@@ -445,7 +445,7 @@ class ManualController(ControlModel):
         """
         self.push()
 
-    def _read(self):
+    def _run(self):
         """
         Target for the process spawning (wrapper method).
         """
@@ -458,7 +458,7 @@ class ManualController(ControlModel):
 
         PID is returned to properly cleanup the processes in the main execution loop.
         """
-        if not self:
+        if not CONTROLLER:
             raise ControlSystemException("Can't start the control system loop")
 
         self._process.start()
