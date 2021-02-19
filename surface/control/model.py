@@ -6,8 +6,8 @@ from abc import ABC
 from typing import Dict, Set
 from .motion import Motion
 from ..enums import DrivingMode
-from ..mastermind import DataManager
-from ..constants.mastermind import RK_CONTROL_DRIVING_MODE
+from ..athena import DataManager
+from ..constants.athena import RK_CONTROL_DRIVING_MODE
 
 
 class ControlModel(ABC):

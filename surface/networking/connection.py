@@ -7,9 +7,9 @@ from threading import Thread
 import msgpack
 from msgpack import UnpackException
 from ..constants.networking import CONNECTION_IP, CONNECTION_PORT, CONNECTION_DATA_SIZE
-from ..constants.mastermind import RK_CONNECTION_SURFACE_PI
+from ..constants.athena import RK_CONNECTION_SURFACE_PI
 from ..utils import logger
-from ..mastermind import DataManager
+from ..athena import DataManager
 from ..exceptions import NetworkingException
 from ..enums import ConnectionStatus
 

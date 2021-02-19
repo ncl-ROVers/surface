@@ -3,8 +3,8 @@ Data manager module for dispatching information to different components of the v
 """
 from redis import Redis
 from ..utils import classgetter
-from ..constants.mastermind import REDIS_HOST, REDIS_PORT
-from ..constants.mastermind import DATA_CONNECTIONS, DATA_CONTROL, DATA_MISCELLANEOUS, DATA_RECEIVED, DATA_TRANSMISSION
+from ..constants.athena import REDIS_HOST, REDIS_PORT
+from ..constants.athena import DATA_CONNECTIONS, DATA_CONTROL, DATA_MISCELLANEOUS, DATA_RECEIVED, DATA_TRANSMISSION
 from .data_segment import DataSegment
 
 
