@@ -1,17 +1,15 @@
 """
-Data manager module for dispatching information to different components of the vehicle.
+Data segment module for lower-level operations with Redis.
 """
 from typing import Iterable
 import msgpack
 from msgpack import UnpackException, PackException
 from redis import Redis, RedisError
-from .utils import logger, classgetter
-from .constants import REDIS_HOST, REDIS_PORT
-from .constants import DATA_CONNECTIONS, DATA_CONTROL, DATA_MISCELLANEOUS, DATA_RECEIVED, DATA_TRANSMISSION
-from .exceptions import DataManagerException
+from ..utils import logger
+from ..exceptions import DataManagerException
 
 
-class _DataSegment:
+class DataSegment:
     """
     Handle storing and updating values related to a specific set of keys.
 
@@ -136,97 +134,3 @@ class _DataSegment:
         Build a redis key string that guarantees uniqueness with respect to this data segment.
         """
         return self._name + ":" + key
-
-
-# noinspection PyMethodParameters
-class DataManager:
-    """
-    Handle creation of each data segment and access to it.
-
-    Currently the segments are as follows:
-
-        - connections - for monitoring network connection to each component
-        - received - for data received from the ROV
-        - transmission - for data that will be sent to the ROV
-        - control - for all control system information
-        - miscellaneous - for other, un-classified data
-
-    You can retrieve each segment by using the associated descriptor, e.g.:
-
-        print(DataManager.transmission.all)
-
-    Keep in mind that each segment MUST have a unique name to avoid key collisions in cache.
-    """
-
-    # pylint: disable=no-method-argument
-    _cache = Redis(host=REDIS_HOST, port=REDIS_PORT)
-    _segments = [
-        _DataSegment(
-            name="connections",
-            cache=_cache,
-            data=DATA_CONNECTIONS
-        ),
-        _DataSegment(
-            name="received",
-            cache=_cache,
-            data=DATA_RECEIVED
-        ),
-        _DataSegment(
-            name="transmission",
-            cache=_cache,
-            data=DATA_TRANSMISSION
-        ),
-        _DataSegment(
-            name="control",
-            cache=_cache,
-            data=DATA_CONTROL
-        ),
-        _DataSegment(
-            name="miscellaneous",
-            cache=_cache,
-            data=DATA_MISCELLANEOUS
-        )
-    ]
-
-    # Type hint return types of the segments to trick pylint, as it doesn't understand how descriptors work
-    # pylint: disable = function-redefined
-    connections: _DataSegment
-    received: _DataSegment
-    transmission: _DataSegment
-    control: _DataSegment
-    miscellaneous: _DataSegment
-
-    @classgetter
-    def connections() -> _DataSegment:
-        """
-        Fetch `connections` data.
-        """
-        return DataManager._segments[0]
-
-    @classgetter
-    def received() -> _DataSegment:
-        """
-        Fetch `received` data.
-        """
-        return DataManager._segments[1]
-
-    @classgetter
-    def transmission() -> _DataSegment:
-        """
-        Fetch `transmission` data.
-        """
-        return DataManager._segments[2]
-
-    @classgetter
-    def control() -> _DataSegment:
-        """
-        Fetch `control` data.
-        """
-        return DataManager._segments[3]
-
-    @classgetter
-    def miscellaneous() -> _DataSegment:
-        """
-        Fetch `miscellaneous` data.
-        """
-        return DataManager._segments[4]

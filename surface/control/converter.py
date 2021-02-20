@@ -2,9 +2,8 @@
 Utility module allowing conversion of normalised motion values to hardware-specific ranges.
 """
 from typing import Dict
-from .constants import CONTROL_NORM_IDLE, CONTROL_NORM_MAX, CONTROL_NORM_MIN
-from .constants import THRUSTER_MAX, THRUSTER_MIN
-from .utils import normalise
+from .common import normalise
+from ..constants.control import CONTROL_NORM_IDLE, CONTROL_NORM_MAX, CONTROL_NORM_MIN, THRUSTER_MAX, THRUSTER_MIN
 
 
 class Converter:

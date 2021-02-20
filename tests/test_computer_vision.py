@@ -3,7 +3,7 @@ Verify computer vision algorithms' performance and correctness.
 """
 import os
 import cv2
-from surface.mussels import count_mussels
+from surface.vision.mussels import count_mussels
 
 
 def test_final_result():

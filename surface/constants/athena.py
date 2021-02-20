@@ -1,52 +1,14 @@
 """
-Constants and other static values.
+Data manager constants.
 """
 import os
-import dotenv
-from .enums import ConnectionStatus, DrivingMode
-
-# Declare paths to relevant folders - tests folder shouldn't be known here
-ROOT_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
-SURFACE_DIR = os.path.join(ROOT_DIR, "surface")
-RES_DIR = os.path.join(SURFACE_DIR, "res")
-LOG_DIR = os.path.join(SURFACE_DIR, "log")
-
-# Load the environment variables from the root folder and/or the resources folder
-dotenv.load_dotenv(dotenv_path=os.path.join(ROOT_DIR, ".env"))
-dotenv.load_dotenv(dotenv_path=os.path.join(RES_DIR, ".env"))
+from ..enums import ConnectionStatus, DrivingMode
+from .control import THRUSTER_IDLE, GRIPPER_IDLE, CORD_IDLE, CONTROL_NORM_IDLE
+from .control import CONTROL_AUTONOMOUS_NAME, CONTROL_MANUAL_NAME, CONTROL_MANAGER_NAME
 
 # Declare redis settings - use .env file to override the defaults
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
-
-# Declare logging config - use .env file to override the defaults
-LOG_CONFIG_PATH = os.getenv("LOG_CONFIG_PATH", os.path.join(RES_DIR, "log-config.json"))
-LOGGER_NAME = os.getenv("LOGGER_NAME", "surface")
-
-# Declare connection information - use .env file to override the defaults
-CONNECTION_IP = os.getenv("CONNECTION_IP", "localhost")
-CONNECTION_PORT = int(os.getenv("CONNECTION_PORT", "50000"))
-CONNECTION_DATA_SIZE = int(os.getenv("CONNECTION_DATA_SIZE", "4096"))
-
-# Declare the precision of the normalisation function
-NORMALISATION_PRECISION = 3
-
-# Declare names of the control models
-CONTROL_AUTONOMOUS_NAME = "autonomous"
-CONTROL_MANUAL_NAME = "manual"
-CONTROL_MANAGER_NAME = "manager"
-
-# Declare control's normal values
-CONTROL_NORM_MAX = 1
-CONTROL_NORM_IDLE = 0
-CONTROL_NORM_MIN = -1
-
-# Hardware values
-THRUSTER_MAX = 1900
-THRUSTER_IDLE = 1500
-THRUSTER_MIN = 1100
-GRIPPER_IDLE = 1500
-CORD_IDLE = 1500
 
 # Declare the name of the driving mode key
 RK_CONTROL_DRIVING_MODE = "driving-mode"
@@ -106,16 +68,3 @@ DATA_CONTROL = {
 DATA_MISCELLANEOUS = {
 
 }
-
-# Joystick control boundary - any values below are considered 0
-DEAD_ZONE = 1025
-
-# Hardware and the expected min/max values
-HARDWARE_AXIS_MAX = 32767
-HARDWARE_AXIS_MIN = -32768
-HARDWARE_TRIGGER_MAX = 255
-HARDWARE_TRIGGER_MIN = 0
-INTENDED_AXIS_MAX = CONTROL_NORM_MAX
-INTENDED_AXIS_MIN = CONTROL_NORM_MIN
-INTENDED_TRIGGER_MAX = CONTROL_NORM_MAX
-INTENDED_TRIGGER_MIN = CONTROL_NORM_IDLE

@@ -6,11 +6,12 @@ from multiprocessing import Process
 from threading import Thread
 import msgpack
 from msgpack import UnpackException
-from .utils import logger
-from .constants import RK_CONNECTION_SURFACE_PI, CONNECTION_IP, CONNECTION_PORT, CONNECTION_DATA_SIZE
-from .data_manager import DataManager
-from .enums import ConnectionStatus
-from .exceptions import NetworkingException
+from ..constants.networking import CONNECTION_IP, CONNECTION_PORT, CONNECTION_DATA_SIZE
+from ..constants.athena import RK_CONNECTION_SURFACE_PI
+from ..utils import logger
+from ..athena import DataManager
+from ..exceptions import NetworkingException
+from ..enums import ConnectionStatus
 
 
 # noinspection PyMethodParameters

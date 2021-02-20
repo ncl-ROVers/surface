@@ -4,10 +4,10 @@ Base class allowing specifying custom control models.
 import abc
 from abc import ABC
 from typing import Dict, Set
-from .data_manager import DataManager
 from .motion import Motion
-from .constants import RK_CONTROL_DRIVING_MODE
-from .enums import DrivingMode
+from ..enums import DrivingMode
+from ..athena import DataManager
+from ..constants.athena import RK_CONTROL_DRIVING_MODE
 
 
 class ControlModel(ABC):

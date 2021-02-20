@@ -1,0 +1,3 @@
+"""
+Computer vision constants.
+"""
