@@ -23,10 +23,10 @@ DATA_CONNECTIONS = {
 }
 # Data received from Raspberry Pi
 DATA_RECEIVED = {
-    "A_O": False,
-    "A_I": False,
-    "S_O": 0,
-    "S_I": 0
+    "A_A": False,
+    "A_B": False,
+    "S_A": 0,
+    "S_B": 0
 }
 # Data that will be sent to Raspberry Pi
 DATA_TRANSMISSION = {
