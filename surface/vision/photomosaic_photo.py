@@ -167,22 +167,21 @@ def _color_detect(images: list) -> list:
     :return: the color map of squares
     """
     color_content = [{}, {}, {}, {}, {}]
-    for color, value in COLOR_DICT.items():
+    for color in COLOR_DICT.keys():
         masks = _filter_color(COLOR_DICT[color][0], COLOR_DICT[color][1], images)
         index_mask = 0
         for mask in masks:
-            shape = mask.shape
             contours, _ = _cv2.findContours(mask, _cv2.RETR_TREE, _cv2.CHAIN_APPROX_SIMPLE)
-            for idx, contour in enumerate(contours):
-                if _cv2.contourArea(contour) > int(shape[0] / 4):
+            for _, contour in enumerate(contours):
+                if _cv2.contourArea(contour) > int(mask.shape[0] / 4):
                     moments = _cv2.moments(contours[0])
                     if moments["m00"] != 0:
                         c_x = int(moments["m10"] / moments["m00"])
                         c_y = int(moments["m01"] / moments["m00"])
                     else:
                         c_x, c_y = 0, 0
-                    horizontal = c_x / shape[1]
-                    vertical = c_y / shape[0]
+                    horizontal = c_x / mask.shape[1]
+                    vertical = c_y / mask.shape[0]
                     if color != "white":
                         check_for_color(horizontal, vertical, color_content, index_mask, color)
             index_mask += 1
@@ -190,6 +189,9 @@ def _color_detect(images: list) -> list:
 
 
 def check_for_color(horizontal, vertical, color_content, index_mask, color):
+    """
+    Helper function to check for color
+    """
     if (vertical < 0.2) & (horizontal < 0.7) & (horizontal > 0.3):
         color_content[index_mask][color] = 0
     elif (vertical > 0.8) & (horizontal < 0.7) & (horizontal > 0.3):
