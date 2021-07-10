@@ -11,21 +11,21 @@ from sklearn.cluster import KMeans
 from ..utils import logger
 
 
-def _remove_circles(mask: ndarray) -> ndarray:
+def _remove_circles(mask: np.ndarray) -> np.ndarray:
     """
     Remove the small circles (mussels) from the image.
     """
     contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
-    for contour in contours:
-        area = cv2.contourArea(contour)
+    for i in range(len(contours)):
+        area = cv2.contourArea(contours[i])
         if area < 2000:
-            cv2.drawContours(mask, [contour], 0, 0, -1)
+            cv2.drawContours(mask, [contours[i]], 0, 0, -1)
 
     return mask
 
 
-def _gaussian_blur_smooth(mask: ndarray) -> ndarray:
+def _gaussian_blur_smooth(mask: np.ndarray) -> np.ndarray:
     """
     Convert the image to Canny Line with Gaussian blur.
     """
@@ -42,7 +42,7 @@ def _gaussian_blur_smooth(mask: ndarray) -> ndarray:
     return blurred
 
 
-def _get_edge_points(mask: ndarray) -> list:
+def _get_edge_points(mask) -> list:
     """
     Get the list of points on the edge of the square.
     """
@@ -58,7 +58,7 @@ def _get_edge_points(mask: ndarray) -> list:
     return points
 
 
-def _get_corner_points(points: list) -> ndarray:
+def _get_corner_points(points: list) -> np.ndarray:
     """
     Find the points on four edge by K-Means Cluster.
     """
@@ -132,7 +132,7 @@ def _find_mussels(image_greyscale: ndarray, mask: ndarray, hull_rect: ndarray) -
     return num, mask
 
 
-def count_mussels(image: ndarray) -> Tuple[int, ndarray, ndarray, ndarray, ndarray, ndarray]:
+def count_mussels(image: np.ndarray) -> Tuple[int, ndarray, ndarray, ndarray, ndarray, ndarray]:
     """
     Count the number of the mussels in the given image.
 
@@ -164,7 +164,7 @@ def count_mussels(image: ndarray) -> Tuple[int, ndarray, ndarray, ndarray, ndarr
     hull_rect = _get_corner_points(points)
 
     # Draw hull rect on the original image
-    convex_hull: ndarray = image.copy()
+    convex_hull = image.copy()
     cv2.drawContours(convex_hull, [hull_rect], 0, (0, 0, 255), 3)
 
     # Find, count and draw the circles and square on the image
