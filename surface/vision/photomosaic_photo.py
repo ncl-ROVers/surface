@@ -167,8 +167,8 @@ def _color_detect(images: list) -> list:
     :return: the color map of squares
     """
     color_content = [{}, {}, {}, {}, {}]
-    for color in COLOR_DICT.keys():
-        masks = _filter_color(COLOR_DICT[color][0], COLOR_DICT[color][1], images)
+    for color, value in COLOR_DICT.items():
+        masks = _filter_color(value[0], value[1], images)
         index_mask = 0
         for mask in masks:
             contours, _ = _cv2.findContours(mask, _cv2.RETR_TREE, _cv2.CHAIN_APPROX_SIMPLE)
