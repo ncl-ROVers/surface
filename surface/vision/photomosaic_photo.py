@@ -4,9 +4,9 @@ Photomosaic
 
 Module storing an implementation of the cube photomosaic task.
 """
+import typing as _typing
 import cv2 as _cv2
 import numpy as _np
-import typing as _typing
 from ..constants.vision import MOSAIC_HEIGHT, COLOR_DICT
 
 
@@ -34,9 +34,9 @@ def _cut_images(images: list) -> list:
     rect = (30, 30, 220, 220)
 
     img_white = list()
-    for i in range(5):
-        images[i] = _cv2.resize(images[i], (256, 256))
-        mask = _np.zeros(images[i].shape[:2], _np.uint8)
+    for idx in range(5):
+        images[idx] = _cv2.resize(images[i], (256, 256))
+        mask = _np.zeros(images[idx].shape[:2], _np.uint8)
 
         # Extract background and foreground images
         bgd_model = _np.zeros((1, 65), _np.float64)
@@ -44,9 +44,10 @@ def _cut_images(images: list) -> list:
 
         _cv2.grabCut(images[i], mask, rect, bgd_model, fgd_model, 5, _cv2.GC_INIT_WITH_RECT)
         mask2 = _np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
-        img_white.append(images[i] * mask2[:, :, _np.newaxis])
+        img_white.append(images[idx] * mask2[:, :, _np.newaxis])
 
     img_white = _find_rectangle(img_white)
+
     for idx in range(len(img_white)):
         img_white[idx] = _cv2.resize(img_white[idx], (int(img_white[idx].shape[0] / 2), int(img_white[idx].shape[1]/2)))
     print(len(img_white))
@@ -61,23 +62,23 @@ def _find_rectangle(images: list) -> list:
     :param images: List of found sides of the object
     :return: Cut images with the biggest rectangle
     """
-    for i in range(len(images)):
-        image_gray = _cv2.cvtColor(images[i], _cv2.COLOR_BGR2GRAY)
+    for idx in range(len(images)):
+        image_gray = _cv2.cvtColor(images[idx], _cv2.COLOR_BGR2GRAY)
         thresh = _cv2.threshold(image_gray, 45, 255, _cv2.THRESH_BINARY)[1]
         img_dilate = _cv2.dilate(thresh, _np.ones((5, 5)), iterations=1)
-        x, y, w, h = _get_contours(img_dilate)
-        images[i] = images[i][y: y + h, x: x + w]
+        _x, _y, _w, _h = _get_contours(img_dilate)
+        images[idx] = images[idx][_y: _y + _h, _x:_x + _w]
     return images
 
 
-def _get_contours(image):
+def _get_contours(cut_image):
     """
     Function to get the biggest contours of cut image. After finding the biggest contour,
     function returns points of rectangle and lengths of sides.
-    :param Image: masked images of sides
+    :param cut_image: masked images of sides
     :return: Points of the biggest rectangle in masked photo
     """
-    contours, hierarchy = _cv2.findContours(image, _cv2.RETR_EXTERNAL, _cv2.CHAIN_APPROX_NONE)
+    contours, _ = _cv2.findContours(cut_image, _cv2.RETR_EXTERNAL, _cv2.CHAIN_APPROX_NONE)
     area_list = [[_cv2.contourArea(cnt), cnt] for cnt in contours]
     biggest_contour_area = 0
     biggest_contour = 0
@@ -87,9 +88,9 @@ def _get_contours(image):
             biggest_contour = i[1]
     peri = _cv2.arcLength(biggest_contour, True)
     approx = _cv2.approxPolyDP(biggest_contour, 0.02 * peri, True)
-    x, y, w, h = _cv2.boundingRect(approx)
-    print(x, y, w, h)
-    return x, y, w, h
+    x_, y_, w_, h_ = _cv2.boundingRect(approx)
+    print(x_, y_, w_, h_)
+    return x_, y_, w_, h_
 
 
 def _resize_images(images: list) -> list:
@@ -99,11 +100,11 @@ def _resize_images(images: list) -> list:
     :return: the resized cut images
     """
     index = 0
-    for img in images:
+    for _img in images:
         # Dimensions of object = 120 cm long, 60 cm wide, and 60 cm tall
         # It is better to divide by height of the image than width
-        width = int(img.shape[0] * MOSAIC_HEIGHT / img.shape[1])
-        images[index] = _cv2.resize(src=img, dsize=(width, MOSAIC_HEIGHT))
+        width = int(_img.shape[0] * MOSAIC_HEIGHT / _img.shape[1])
+        images[index] = _cv2.resize(src=_img, dsize=(width, MOSAIC_HEIGHT))
         index += 1
 
     return images
@@ -120,7 +121,7 @@ def _type_division(dict_color_map: list) -> \
     index = 1
     bottom_index = list()
     top_index = 0
-    for dict_color in range(1, len(dict_color_map)):
+    for _ in range(1, len(dict_color_map)):
         bottom_index.append(index)
         index += 1
     return bottom_index, top_index
@@ -138,9 +139,9 @@ def _combine_images(img_white: list, dict_color_map: list, bottom_index: list, t
     left_img = img_white[bottom_index[0]]
     length_top = 0
     connect_color = _get_key(dict_color_map[bottom_index[0]], 1)
-    for i in range(3):
-        for k in range(3):
-            img_index = k + 1
+    for _ in range(3):
+        for idx in range(3):
+            img_index = idx + 1
             if connect_color == _get_key(dict_color_map[bottom_index[img_index]], 3):
                 left_img = _np.concatenate((left_img, img_white[bottom_index[img_index]]), axis=1)
                 connect_color = _get_key(dict_color_map[bottom_index[img_index]], 1)
@@ -170,19 +171,19 @@ def _color_detect(images: list) -> list:
         index_mask = 0
         for mask in masks:
             shape = mask.shape
-            contours, hi = _cv2.findContours(mask, _cv2.RETR_TREE, _cv2.CHAIN_APPROX_SIMPLE)
+            contours, _ = _cv2.findContours(mask, _cv2.RETR_TREE, _cv2.CHAIN_APPROX_SIMPLE)
             for k in range(len(contours)):
                 area = _cv2.contourArea(contours[k])
                 if area > int(shape[0] / 4):
                     cnt = contours[0]
-                    M = _cv2.moments(cnt)
-                    if M["m00"] != 0:
-                        cx = int(M["m10"] / M["m00"])
-                        cy = int(M["m01"] / M["m00"])
+                    _M = _cv2.moments(cnt)
+                    if _M["m00"] != 0:
+                        c_x = int(_M["m10"] / _M["m00"])
+                        c_y = int(_M["m01"] / _M["m00"])
                     else:
-                        cx, cy = 0, 0
-                    horizontal = cx / shape[1]
-                    vertical = cy / shape[0]
+                        c_x, c_y = 0, 0
+                    horizontal = c_x / shape[1]
+                    vertical = c_y / shape[0]
                     if color != "white":
                         if (vertical < 0.2) & (horizontal < 0.7) & (horizontal > 0.3):
                             color_content[index_mask][color] = 0
@@ -208,9 +209,12 @@ def _get_key(dictionary: dict, value: int) -> list:
     return [l for l, v in dictionary.items() if v == value]
 
 
-def helper_display(tag, img):
-    for k, i in enumerate(img):
-        _cv2.imshow(tag + str(k), i)
+def helper_display(tag, image_helper):
+    """
+    Helper function for images for displaying
+    """
+    for index, name in enumerate(image_helper):
+        _cv2.imshow(tag + str(index), name)
 
 
 def create_photomosaic(images: list) -> _typing.Tuple[list, _np.ndarray, list, list]:
@@ -243,7 +247,6 @@ def create_photomosaic(images: list) -> _typing.Tuple[list, _np.ndarray, list, l
 if __name__ == "__main__":
     img = []
     # Added new dictionary of photos with different background and appropriate faces of object
-    # TODO prepare folder for storing images/or taking them directly from taken photo from camera
     # PHOTOS MUST BE TAKEN IN CORRECT ORDER: TOP -> LEFT -> FRONT -> RIGHT -> BACK
     for i in range(5):
         # This line to be changed when we get the camera
@@ -255,9 +258,3 @@ if __name__ == "__main__":
     k = _cv2.waitKey(0)
     if k == 27:  # wait for ESC key to exit
         _cv2.destroyAllWindows()
-
-# import os
-# if os.path.exists("result.png"):
-#     os.remove("result.png")
-# _cv2.imwrite("result.png", result_img)
-
