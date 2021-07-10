@@ -6,15 +6,16 @@ import json
 import setuptools
 
 # Fetch the root folder to specify absolute paths to the "include" files
-ROOT = os.path.normpath(os.path.dirname(__file__))
+ASSETS_DIR = os.path.join(os.path.normpath(os.path.dirname(__file__)), "surface", "assets")
 
 # Specify which files should be added to the installation
 PACKAGE_DATA = [
-    os.path.join(ROOT, "surface", "res", "metadata.json"),
-    os.path.join(ROOT, "surface", "log", ".keep")
+    os.path.join(ASSETS_DIR, "metadata.json"),
+    os.path.join(ASSETS_DIR, "log-config.json"),
+    os.path.join(ASSETS_DIR, "log", ".keep")
 ]
 
-with open(os.path.join(ROOT, "surface", "res", "metadata.json")) as f:
+with open(os.path.join(ASSETS_DIR, "metadata.json")) as f:
     metadata = json.load(f)
 
 setuptools.setup(
