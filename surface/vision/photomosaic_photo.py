@@ -19,7 +19,7 @@ def _filter_color(lower: _np.ndarray, upper: _np.ndarray, images: list) -> list:
     :param images: List of HSV images
     :return: Masks after applying the filter
     """
-    return [_cv2.inRange(image, lower, upper) for image in images]
+    return [_cv2.inRange(image_in_range, lower, upper) for image_in_range in images]
 
 
 def _cut_images(images: list) -> list:
@@ -48,8 +48,9 @@ def _cut_images(images: list) -> list:
 
     img_white = _find_rectangle(img_white)
 
-    for idx in range(len(img_white)):
-        img_white[idx] = _cv2.resize(img_white[idx], (int(img_white[idx].shape[0] / 2), int(img_white[idx].shape[1]/2)))
+    for index, image_to_resize in enumerate(img_white):
+        img_white[index] = _cv2.resize(image_to_resize, (int(image_to_resize.shape[0] / 2),
+                                                         int(image_to_resize.shape[1]/2)))
     print(len(img_white))
 
     return img_white
@@ -62,8 +63,8 @@ def _find_rectangle(images: list) -> list:
     :param images: List of found sides of the object
     :return: Cut images with the biggest rectangle
     """
-    for idx in range(len(images)):
-        image_gray = _cv2.cvtColor(images[idx], _cv2.COLOR_BGR2GRAY)
+    for idx, image_to_find_rectangle in enumerate(images):
+        image_gray = _cv2.cvtColor(image_to_find_rectangle, _cv2.COLOR_BGR2GRAY)
         thresh = _cv2.threshold(image_gray, 45, 255, _cv2.THRESH_BINARY)[1]
         img_dilate = _cv2.dilate(thresh, _np.ones((5, 5)), iterations=1)
         _x, _y, _w, _h = _get_contours(img_dilate)
@@ -82,15 +83,15 @@ def _get_contours(cut_image):
     area_list = [[_cv2.contourArea(cnt), cnt] for cnt in contours]
     biggest_contour_area = 0
     biggest_contour = 0
-    for i in area_list:
-        if i[0] > biggest_contour_area:
-            biggest_contour_area = i[0]
-            biggest_contour = i[1]
+    for elem in area_list:
+        if elem[0] > biggest_contour_area:
+            biggest_contour_area = elem[0]
+            biggest_contour = elem[1]
     peri = _cv2.arcLength(biggest_contour, True)
     approx = _cv2.approxPolyDP(biggest_contour, 0.02 * peri, True)
-    x_, y_, w_, h_ = _cv2.boundingRect(approx)
-    print(x_, y_, w_, h_)
-    return x_, y_, w_, h_
+    x_point, y_point, width, height = _cv2.boundingRect(approx)
+    print(x_point, y_point, width, height)
+    return x_point, y_point, width, height
 
 
 def _resize_images(images: list) -> list:
@@ -172,14 +173,12 @@ def _color_detect(images: list) -> list:
         for mask in masks:
             shape = mask.shape
             contours, _ = _cv2.findContours(mask, _cv2.RETR_TREE, _cv2.CHAIN_APPROX_SIMPLE)
-            for k in range(len(contours)):
-                area = _cv2.contourArea(contours[k])
-                if area > int(shape[0] / 4):
-                    cnt = contours[0]
-                    _M = _cv2.moments(cnt)
-                    if _M["m00"] != 0:
-                        c_x = int(_M["m10"] / _M["m00"])
-                        c_y = int(_M["m01"] / _M["m00"])
+            for idx in range(len(contours)):
+                if _cv2.contourArea(contours[idx]) > int(shape[0] / 4):
+                    moments = _cv2.moments(contours[0])
+                    if moments["m00"] != 0:
+                        c_x = int(moments["m10"] / moments["m00"])
+                        c_y = int(moments["m01"] / moments["m00"])
                     else:
                         c_x, c_y = 0, 0
                     horizontal = c_x / shape[1]
