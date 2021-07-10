@@ -1,9 +1,9 @@
 """
-Photomosaic
-===========
+Photomosaic.
 
 Module storing an implementation of the cube photomosaic task.
 """
+
 import typing as _typing
 import cv2 as _cv2
 import numpy as _np
@@ -24,12 +24,11 @@ def _filter_color(lower: _np.ndarray, upper: _np.ndarray, images: list) -> list:
 
 def _cut_images(images: list) -> list:
     """
-    Cut the square in the images
+    Cut the square in the images.
 
     :param images: list of images
     :return: the list of cut images
     """
-
     # Used for grabCut function
     rect = (30, 30, 220, 220)
 
@@ -58,8 +57,8 @@ def _cut_images(images: list) -> list:
 
 def _find_rectangle(images: list) -> list:
     """
-    Function uses thresholding to find face of the object. Then it passes this masked image
-    to function _get_contours
+    Use function thresholding to find face of the object. Then it passes this masked image to function _get_contours.
+
     :param images: List of found sides of the object
     :return: Cut images with the biggest rectangle
     """
@@ -74,7 +73,9 @@ def _find_rectangle(images: list) -> list:
 
 def _get_contours(cut_image):
     """
-    Function to get the biggest contours of cut image. After finding the biggest contour,
+    Add function to get the biggest contours of cut image.
+
+    After finding the biggest contour,
     function returns points of rectangle and lengths of sides.
     :param cut_image: masked images of sides
     :return: Points of the biggest rectangle in masked photo
@@ -96,7 +97,8 @@ def _get_contours(cut_image):
 
 def _resize_images(images: list) -> list:
     """
-    resize the images for combining
+    Resize the images for combining.
+
     :param images: list of images
     :return: the resized cut images
     """
@@ -114,8 +116,9 @@ def _resize_images(images: list) -> list:
 def _type_division(dict_color_map: list) -> \
         _typing.Tuple[list, int]:
     """
-    divide the type of squares(upper and lower squares)
-    Function assumes that first photo is taken of the top side's box
+    Divide the type of squares(upper and lower squares).
+
+    Function assumes that first photo is taken of the top side's box.
     :param dict_color_map: the color map for squares
     :return: the index list of bottom squares, the index of top square
     """
@@ -130,7 +133,8 @@ def _type_division(dict_color_map: list) -> \
 
 def _combine_images(img_white: list, dict_color_map: list, bottom_index: list, top_index: int) -> _np.ndarray:
     """
-    combine the squares to a image
+    Combine the squares to a image.
+
     :param img_white: the cut images
     :param dict_color_map: the color map for squares
     :param bottom_index: the index list of bottom squares
@@ -162,7 +166,8 @@ def _combine_images(img_white: list, dict_color_map: list, bottom_index: list, t
 
 def _color_detect(images: list) -> list:
     """
-    detect the color in images
+    Detect the color in images.
+
     :param images: the list of images
     :return: the color map of squares
     """
@@ -190,7 +195,7 @@ def _color_detect(images: list) -> list:
 
 def check_for_color(horizontal, vertical, color_content, index_mask, color):
     """
-    Helper function to check for color
+    User helper function to check for color.
     """
     if (vertical < 0.2) & (horizontal < 0.7) & (horizontal > 0.3):
         color_content[index_mask][color] = 0
@@ -206,7 +211,8 @@ def check_for_color(horizontal, vertical, color_content, index_mask, color):
 
 def _get_key(dictionary: dict, value: int) -> list:
     """
-    get the key of dict() by value
+    Get the key of dict() by value.
+
     :param dictionary: the dict()
     :param value: the value of dict()
     :return: the key of dict()
@@ -216,7 +222,7 @@ def _get_key(dictionary: dict, value: int) -> list:
 
 def helper_display(tag, image_helper):
     """
-    Helper function for images for displaying
+    Use helper function for images for displaying.
     """
     for index, name in enumerate(image_helper):
         _cv2.imshow(tag + str(index), name)
@@ -225,6 +231,7 @@ def helper_display(tag, image_helper):
 def create_photomosaic(images: list) -> _typing.Tuple[list, _np.ndarray, list, list]:
     """
     Process the images and combine them by their color into a photomosaic.
+
     :param images: List of images in OpenCV format
     :return: Original images, Combined picture, the list of original pictures, the list of cut images
     """
