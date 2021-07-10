@@ -17,8 +17,9 @@ def _remove_circles(mask: np.ndarray) -> np.ndarray:
     """
     contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
-    for i in range(len(contours)):
-        area = cv2.contourArea(contours[i])
+    for _, contour in enumerate(contours):
+        area = cv2.contourArea(contour)
+
         if area < 2000:
             cv2.drawContours(mask, [contours[i]], 0, 0, -1)
 
