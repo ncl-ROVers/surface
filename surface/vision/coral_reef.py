@@ -5,7 +5,6 @@ Module storing an implementation of the coral reef task.
 """
 import cv2
 import numpy as np
-import imutils
 from ..constants.vision import RED, GREEN, BLUE, YELLOW
 
 
@@ -102,8 +101,7 @@ def find_contours(image_masked: np.ndarray) -> list:
     :param image_masked: Masked image
     :return: List of bounding boxes.
     """
-    contours = cv2.findContours(image_masked, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    contours = imutils.grab_contours(contours)
+    contours, _ = cv2.findContours(image_masked, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     array_of_bounding_boxes = []
     for contour in contours:
         area = cv2.contourArea(contour)
