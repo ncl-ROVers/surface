@@ -43,7 +43,7 @@ def _gaussian_blur_smooth(mask: np.ndarray) -> np.ndarray:
     return blurred
 
 
-def _get_edge_points(mask) -> list:
+def _get_edge_points(mask: np.ndarray) -> list:
     """
     Get the list of points on the edge of the square.
     """
@@ -122,12 +122,11 @@ def _find_mussels(image_greyscale: ndarray, mask: ndarray, hull_rect: ndarray) -
     # Draw the circles on the image (and count the circles)
     num = 0
     for i in circles[0, :]:
-        i = i.astype(np.int32)
-        if cv2.pointPolygonTest(hull_rect, (i[0], i[1]), measureDist=True) > (-i[2] / 3):
+        if cv2.pointPolygonTest(hull_rect, (int(i[0]), int(i[1])), measureDist=True) > (-int(i[2]) / 3):
 
             # Draw the outer circle, the center of the circle and increment the counter
-            cv2.circle(mask, (i[0], i[1]), i[2], (0, 255, 0), 2)
-            cv2.circle(mask, (i[0], i[1]), 2, (0, 0, 255), 3)
+            cv2.circle(mask, (int(i[0]), int(i[1])), int(i[2]), (0, 255, 0), 2)
+            cv2.circle(mask, (int(i[0]), int(i[1])), 2, (0, 0, 255), 3)
             num += 1
 
     return num, mask
@@ -165,7 +164,7 @@ def count_mussels(image: np.ndarray) -> Tuple[int, ndarray, ndarray, ndarray, nd
     hull_rect = _get_corner_points(points)
 
     # Draw hull rect on the original image
-    convex_hull = image.copy()
+    convex_hull: np.ndarray = image.copy()
     cv2.drawContours(convex_hull, [hull_rect], 0, (0, 0, 255), 3)
 
     # Find, count and draw the circles and square on the image
