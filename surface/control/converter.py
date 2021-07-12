@@ -3,7 +3,8 @@ Utility module allowing conversion of normalised motion values to hardware-speci
 """
 from typing import Dict
 from .common import normalise
-from ..constants.control import CONTROL_NORM_IDLE, CONTROL_NORM_MAX, CONTROL_NORM_MIN, THRUSTER_MAX, THRUSTER_MIN
+from ..constants.control import CONTROL_NORM_IDLE, CONTROL_NORM_MAX, CONTROL_NORM_MIN
+from ..constants.control import THRUSTER_MAX, THRUSTER_MIN, GRIPPER_MAX, GRIPPER_MIN, CORD_MAX, CORD_MIN
 
 
 class Converter:
@@ -25,6 +26,9 @@ class Converter:
             "T_VFS": Converter._thruster_vfs(motions),
             "T_VAP": Converter._thruster_vap(motions),
             "T_VAS": Converter._thruster_vas(motions),
+            "T_M": Converter._thruster_micro(motions),
+            "M_C": Converter._cord(motions),
+            "M_G": Converter._gripper(motions),
         }
 
     @staticmethod
@@ -226,6 +230,39 @@ class Converter:
             value = CONTROL_NORM_IDLE
 
         return Converter._to_thruster_value(value)
+
+    @staticmethod
+    def _thruster_micro(motions: Dict[str, float]) -> int:
+        """
+        Hierarchical control for micro ROV thruster.
+        """
+        micro = motions["micro"]
+
+        value = micro if micro else CONTROL_NORM_IDLE
+
+        return Converter._to_thruster_value(value)
+
+    @staticmethod
+    def _cord(motions: Dict[str, float]) -> int:
+        """
+        Hierarchical control for cord control.
+        """
+        cord = motions["cord"]
+
+        value = cord if cord else CONTROL_NORM_IDLE
+
+        return int(normalise(value, CONTROL_NORM_MIN, CONTROL_NORM_MAX, CORD_MIN, CORD_MAX))
+
+    @staticmethod
+    def _gripper(motions: Dict[str, float]) -> int:
+        """
+        Hierarchical control for gripper control.
+        """
+        gripper = motions["gripper"]
+
+        value = gripper if gripper else CONTROL_NORM_IDLE
+
+        return int(normalise(value, CONTROL_NORM_MIN, CONTROL_NORM_MAX, GRIPPER_MIN, GRIPPER_MAX))
 
     @staticmethod
     def _to_thruster_value(value: float) -> int:

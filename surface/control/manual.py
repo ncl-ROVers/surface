@@ -190,6 +190,7 @@ class ManualController(ControlModel):
         Set state of joystick's horizontal hat.
         """
         self._hat_x = value
+        self._update_cord()
 
     @property
     def hat_y(self) -> int:
@@ -204,6 +205,7 @@ class ManualController(ControlModel):
         Set state of joystick's vertical hat.
         """
         self._hat_y = value
+        self._update_micro_thruster()
 
     @property
     def button_a(self) -> bool:
@@ -218,6 +220,7 @@ class ManualController(ControlModel):
         Set state of joystick's button A.
         """
         self._button_a = value
+        self._update_gripper()
 
     @property
     def button_b(self) -> bool:
@@ -262,6 +265,7 @@ class ManualController(ControlModel):
         Set state of joystick's button Y.
         """
         self._button_y = value
+        self._update_gripper()
 
     @property
     def button_lb(self) -> bool:
@@ -402,6 +406,39 @@ class ManualController(ControlModel):
         else:
             self.heave = CONTROL_NORM_IDLE
 
+    def _update_cord(self):
+        """
+        Cord is determined by the horizontal hat value.
+        """
+        if self.hat_x > 0:
+            self.cord = CONTROL_NORM_MAX
+        elif self.hat_x < 0:
+            self.cord = CONTROL_NORM_MIN
+        else:
+            self.cord = CONTROL_NORM_IDLE
+
+    def _update_gripper(self):
+        """
+        Gripper is determined by the buttons Y and A.
+        """
+        if self.button_y:
+            self.gripper = CONTROL_NORM_MAX
+        elif self.button_a:
+            self.gripper = CONTROL_NORM_MIN
+        else:
+            self.gripper = CONTROL_NORM_IDLE
+
+    def _update_micro_thruster(self):
+        """
+        Micro ROV thruster is determined by the vertical hat value.
+        """
+        if self.hat_y < 0:
+            self.micro = CONTROL_NORM_MAX
+        elif self.hat_y > 0:
+            self.micro = CONTROL_NORM_MIN
+        else:
+            self.micro = CONTROL_NORM_IDLE
+
     def _update_mode(self):
         """
         Mode can be switched between manual and assisted only.
@@ -417,7 +454,10 @@ class ManualController(ControlModel):
                     "roll": CONTROL_NORM_IDLE,
                     "sway": CONTROL_NORM_IDLE,
                     "surge": CONTROL_NORM_IDLE,
-                    "heave": CONTROL_NORM_IDLE
+                    "heave": CONTROL_NORM_IDLE,
+                    "cord": CONTROL_NORM_IDLE,
+                    "gripper": CONTROL_NORM_IDLE,
+                    "micro": CONTROL_NORM_IDLE,
                 }
         elif self.button_select:
             self.mode = DrivingMode.ASSISTED
