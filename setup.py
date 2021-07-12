@@ -41,7 +41,7 @@ setuptools.setup(
         "numpy",
         "sklearn",
         "pandas",
-        "opencv-python==4.5.1.48",
+        "opencv-python",
         "inputs"
     ],
     python_requires=">=3.6",
