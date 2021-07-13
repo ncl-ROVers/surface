@@ -6,7 +6,7 @@ import sys
 import time
 
 # Make sure a local raspberry-pi package can be found and overrides any installed versions
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 # pylint: disable = wrong-import-position
 from surface.networking import Connection
