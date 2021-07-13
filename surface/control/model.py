@@ -28,6 +28,9 @@ class ControlModel(ABC):
         self._sway = Motion("sway")
         self._surge = Motion("surge")
         self._heave = Motion("heave")
+        self._cord = Motion("cord")
+        self._gripper = Motion("gripper")
+        self._micro = Motion("micro")
 
     @property
     def yaw(self) -> float:
@@ -114,6 +117,48 @@ class ControlModel(ABC):
         self._heave.value = value
 
     @property
+    def cord(self) -> float:
+        """
+        Get current cord value.
+        """
+        return self._cord.value
+
+    @cord.setter
+    def cord(self, value: float):
+        """
+        Set current cord value.
+        """
+        self._cord.value = value
+
+    @property
+    def gripper(self) -> float:
+        """
+        Get current gripper value.
+        """
+        return self._gripper.value
+
+    @gripper.setter
+    def gripper(self, value: float):
+        """
+        Set current gripper value.
+        """
+        self._gripper.value = value
+
+    @property
+    def micro(self) -> float:
+        """
+        Get current micro ROV thruster value.
+        """
+        return self._micro.value
+
+    @micro.setter
+    def micro(self, value: float):
+        """
+        Set current micro ROV thruster value.
+        """
+        self._micro.value = value
+
+    @property
     def mode(self) -> DrivingMode:
         """
         Retrieve the current driving mode from the data manager.
@@ -139,7 +184,10 @@ class ControlModel(ABC):
             "roll": self.roll,
             "sway": self.sway,
             "surge": self.surge,
-            "heave": self.heave
+            "heave": self.heave,
+            "cord": self.cord,
+            "gripper": self.gripper,
+            "micro": self.micro
         }
 
     @motions.setter
@@ -155,6 +203,9 @@ class ControlModel(ABC):
         self.sway = values["sway"]
         self.surge = values["surge"]
         self.heave = values["heave"]
+        self.cord = values["cord"]
+        self.gripper = values["gripper"]
+        self.micro = values["micro"]
 
     @property
     def keys(self) -> Set[str]:
